@@ -15,17 +15,22 @@ namespace lab7.ViewModels
         public ObservableCollection<StudentData> Data
         {
             get => data;
-            set=> this.RaiseAndSetIfChanged(ref data, value);
+            set => this.RaiseAndSetIfChanged(ref data, value);
         }
-        public MainWindowViewModel()
-        {
-            /*Data = new ObservableCollection<StudentData> { new StudentData("Ибрагим", new List<string> { "0", "0", "2", "1" }),
-                                                          new StudentData("Нуржан", new List<string> { "1", "2", "2", "1" }),
-                                                          new StudentData("Ербол", new List<string> { "2", "0", "0", "0" }),
-            };*/
-            Data = new ObservableCollection<StudentData>();
-            Init();
 
+        private ObservableCollection<CellAverageMark> newcells;
+
+        public ObservableCollection<CellAverageMark> NewCells
+        {
+            get => newcells;
+            set => this.RaiseAndSetIfChanged(ref newcells, value);
+        }
+    
+    public MainWindowViewModel()
+        {
+            Data = new ObservableCollection<StudentData>();
+            NewCells = new ObservableCollection<CellAverageMark>();
+            Init();
 
             Exit = ReactiveCommand.Create(() => Environment.Exit(0));
             Save = ReactiveCommand.Create(() => SaveTable());
@@ -39,10 +44,18 @@ namespace lab7.ViewModels
         {
             Data.Add(new StudentData("Aleks"));
             Data.Add(new StudentData("Chort"));
-            Data.Add(new StudentData("Alkonafter"));
             foreach (StudentData i in Data) 
             { 
                 i.CountAverage();
+            }
+            
+            for (int index = 0; index < 5; index++)
+            {
+                NewCells.Add(new CellAverageMark("0"));
+            }
+            for (int index = 0; index < NewCells.Count - 1; index++)
+            {
+                AverageMarkForSubject(index);
             }
         }
         
@@ -55,7 +68,7 @@ namespace lab7.ViewModels
 
         public void ChangeMark(int ind)
         {
-            //this.RaiseAndSetIfChanged(Data[ind].AverageMark, "s");
+        
         }
         private void SaveTable()
         {
@@ -75,6 +88,25 @@ namespace lab7.ViewModels
                 
             }
           
+        }
+
+        public void AverageMarkForSubject(int index)
+        {
+            double sum = 0;
+            int count = 0;
+            foreach(var student in Data)
+            {
+                sum += Convert.ToDouble(student.Cells[index].Mark);
+                count += 1;
+            }
+            NewCells[index].Mark = Convert.ToString(sum / count);
+
+            foreach (var student in Data)
+            {
+                sum += Convert.ToDouble(student.Cells[^1].Mark);
+                count += 1;
+            }
+            NewCells[^1].Mark = Convert.ToString(sum / count);
         }
         private void LoadTable()
         {

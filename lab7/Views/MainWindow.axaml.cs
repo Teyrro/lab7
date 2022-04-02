@@ -16,19 +16,27 @@ namespace lab7.Views
 
         }
 
-        public async void StudentMarkAverage(object sender, RoutedEventArgs e)
+        private void dataGrid_CellEditEnded(object sender, DataGridCellEditEndedEventArgs e)
         {
+            var context = this.DataContext as MainWindowViewModel;
+            ((sender as DataGrid).SelectedItem as StudentData).CountAverage();
 
-            var box = sender as TextBox;
-            if (box != null)
-            {
-                var student = box.DataContext as StudentData;
-                student.CountAverage();
-
-            }
-            
-           
+            DataGridColumn a = (sender as DataGrid).CurrentColumn;
+            int index = ((sender as DataGrid).Columns.IndexOf(a));
+            context.AverageMarkForSubject(index - 1);
         }
+
+        /*        public async void StudentMarkAverage(object sender, RoutedEventArgs e)
+                {
+
+                    var box = sender as TextBox;
+                    if (box != null)
+                    {
+                        var student = box.DataContext as StudentData;
+                        student.CountAverage();
+
+                    }
+                }*/
 
         private async void AboutClick(object sender, RoutedEventArgs e)
         {
